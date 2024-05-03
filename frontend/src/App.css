@@ -1,0 +1,11 @@
+@media screen and (min-width: 768px) {
+  .form-wrapper {
+    width: 35vw;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .form-wrapper {
+    width: 100%;
+  }
+}
