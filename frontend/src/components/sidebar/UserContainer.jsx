@@ -1,6 +1,6 @@
 import React from "react";
 import DisplayUsers from "./DisplayUsers";
-import MessageContainer from "../Message/MessageContainer";
+import MessageContainer from "../message/MessageContainer";
 
 const UserContainer = () => {
   return (
