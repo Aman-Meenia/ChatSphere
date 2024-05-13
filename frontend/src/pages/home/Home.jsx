@@ -2,6 +2,7 @@ import React from "react";
 import Navbar from "../../components/Navbar";
 import Sidebar from "../../components/sidebar/Sidebar";
 import ChatArea from "../../components/chatarea/ChatArea";
+import Loading from "../../components/Loading";
 
 const Home = () => {
   return (

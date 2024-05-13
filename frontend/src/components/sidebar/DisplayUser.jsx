@@ -1,6 +1,7 @@
 import React from "react";
 
 const DisplayUser = () => {
+  console.log("Working DisplayUser");
   return (
     <>
       <div className="hover:bg-[rgba(151,154,151,0.2)] ">

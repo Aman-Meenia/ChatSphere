@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../../App.css";
+import { useLogin } from "../../hooks/useLogin";
 
 const Login = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
 
+  const { loading, Login } = useLogin();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    await Login({ userName, password });
+    setUserName("");
+    setPassword("");
   };
   return (
     <div className="p-4 h-screen flex items-center justify-center">
@@ -62,12 +68,11 @@ const Login = () => {
 
             <div>
               <button className="btn btn-block btn-sm mt-2">
-                {/* {loading ? ( */}
-                {/*   <span className="loading loading-spinner"></span> */}
-                {/* ) : ( */}
-                {/*   "Login" */}
-                {/* )} */}
-                Login
+                {loading ? (
+                  <span className="loading loading-spinner"></span>
+                ) : (
+                  "Login"
+                )}
               </button>
             </div>
           </form>

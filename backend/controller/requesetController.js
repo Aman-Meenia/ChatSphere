@@ -95,7 +95,8 @@ export const sendRequest = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Request sent successfully",
-      data: newRequest,
+      id: receiver,
+      friendshipStatus: "Request Sent",
     });
   } catch (err) {
     console.log("Error in request reject api");
@@ -150,10 +151,11 @@ export const acceptRequest = async (req, res) => {
     });
 
     const requestDelete = await Request.findOneAndDelete({ sender, receiver });
-
     return res.status(200).json({
       success: true,
       message: "Request accept",
+      id: sender,
+      friendshipStatus: "Friend",
     });
   } catch (err) {
     console.log("Error in accept request api");
@@ -168,6 +170,7 @@ export const acceptRequest = async (req, res) => {
 
 export const rejectRequest = async (req, res) => {
   try {
+    console.log("reject function called");
     let { sender } = req.body;
     sender = sender.trim();
     const receiver = req.user._id;
@@ -208,12 +211,127 @@ export const rejectRequest = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Request cancel successfully",
+      id: sender,
+      friendshipStatus: "Not friends",
     });
   } catch (err) {
     console.log("Error in reject request api ");
     return res.status(500).json({
       success: false,
       message: "Internal server error",
+    });
+  }
+};
+
+// <------------------------------Get all requests Received ------------------------->
+
+export const getAllRequestsReceived = async (req, res) => {
+  try {
+    const { id: userId } = req.user;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const requestList = await Request.find({ receiver: userId });
+
+    return res.status(200).json({
+      success: true,
+      requestList: requestList,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+// <------------------------------Get all requests sent ------------------------->
+
+export const getAllRequestSent = async (req, res) => {
+  try {
+    const { id: userId } = req.user;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+    // console.log;
+
+    const requestList = await Request.find({ sender: userId });
+
+    return res.status(200).json({
+      success: true,
+      requestList: requestList,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+//<--------------------------- withdraw Request ------------------------>
+
+export const withdrawRequest = async (req, res) => {
+  try {
+    const { receiver } = req.body;
+    const sender = req.user._id;
+
+    console.log("receiver is ", receiver);
+    if (!receiver) {
+      return res.status(400).json({
+        success: false,
+        message: "Receiver id is required",
+      });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(receiver)) {
+      return res.status(400).json({
+        success: false,
+        message: "Receiver id is not valid",
+      });
+    }
+
+    const userExists = await User.findById(receiver);
+
+    if (!userExists) {
+      return res.status(400).json({
+        success: false,
+        message: "User not exists",
+      });
+    }
+
+    const requestDelete = await Request.findOneAndDelete({ sender, receiver });
+
+    if (!requestDelete) {
+      return res.status(400).json({
+        success: false,
+        message: "Request not found",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Request withdrawn successfully",
+      id: receiver,
+      friendshipStatus: "Not friends",
+    });
+  } catch (error) {
+    console.log("Error in withdraw request api" + err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error ",
     });
   }
 };

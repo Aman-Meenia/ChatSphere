@@ -3,6 +3,9 @@ import User from "../models/userModel.js";
 
 export const verifyJWT = async (req, res, next) => {
   const token = req.cookies?.accessToken;
+  // console.log(req.cookies?.accessToken);
+  // console.log("Token this side");
+  // console.log(token);
 
   if (!token) {
     return res.status(401).json({

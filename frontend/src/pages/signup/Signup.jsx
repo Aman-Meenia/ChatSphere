@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "../../App.css";
+import { useSignup } from "../../hooks/useSignup";
 const Signup = () => {
   const [input, setInput] = useState({
     fullName: "",
@@ -10,10 +11,18 @@ const Signup = () => {
     confirmPassword: "",
     gender: "",
   });
-
+  const { loading, signup } = useSignup();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Button CLicked");
+    await signup(input);
+    // setInput({
+    //   fullName: "",
+    //   email: "",
+    //   password: "",
+    //   userName: "",
+    //   confirmPassword: "",
+    //   gender: "",
+    // });
   };
 
   return (
@@ -137,12 +146,11 @@ const Signup = () => {
             </Link>
             <div>
               <button className="btn btn-block btn-sm mt-2 border border-slate-700">
-                {/* {loading ? ( */}
-                {/*   <span className="loading loading-spinner"></span> */}
-                {/* ) : ( */}
-                {/*   "Sign Up" */}
-                {/* )} */}
-                Sign Up
+                {loading ? (
+                  <span className="loading loading-spinner"></span>
+                ) : (
+                  "Sign Up"
+                )}
               </button>
             </div>
           </form>

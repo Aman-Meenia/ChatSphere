@@ -1,8 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { FaEllipsisV } from "react-icons/fa";
 import { IoCreateOutline } from "react-icons/io5";
+import { useSearchUser } from "../../hooks/useSearchUser";
+import { useDispatch } from "react-redux";
+import { setSearchWorking } from "../../features/search/searchUser";
 
 const SideNavbar = () => {
+  const handleLogout = () => {
+    localStorage.removeItem("user");
+    window.location.reload();
+  };
+  const dispatch = useDispatch();
+
+  const [searchInput, setSearchInput] = useState("");
+  const { loading, searchUser } = useSearchUser();
+  useEffect(() => {
+    const debounce = setTimeout(() => {
+      if (searchInput) {
+        dispatch(setSearchWorking({ searchWorking: true }));
+        const fun = async () => {
+          // console.log("searchInput " + searchInput);
+          await searchUser(searchInput);
+        };
+        fun();
+      }
+    }, 500);
+    return () => clearTimeout(debounce);
+  }, [searchInput]);
+
+  if (searchInput.length == 0) {
+    dispatch(setSearchWorking({ searchWorking: false }));
+  }
+
   return (
     <>
       <div className=" fixed top-0 bg-[rgba(30,30,30)] z-50 w-[35%] ">
@@ -14,11 +43,20 @@ const SideNavbar = () => {
               /* color="rgb(58, 165, 255)"  */ size="25px"
             />
           </div>
+          <button className="btn btn-ghost btn-circle" onClick={handleLogout}>
+            Logout
+          </button>
         </div>
 
         <div className="flex justify-center bg-[rgba(30,30,30)]">
           <label className="input input-bordered flex items-center w-[95%] !bg-[rgba(30,30,30)] ">
-            <input type="text" className="grow " placeholder="Search" />
+            <input
+              type="text"
+              className="grow "
+              placeholder="Search"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 18 18"
