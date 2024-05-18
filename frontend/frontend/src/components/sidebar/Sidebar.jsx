@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
-import Navbar from "../Navbar";
+import Navbar from "../message/Navbar";
 import SideNavbar from "./SideNavbar";
 import UserContainer from "./UserContainer";
-import MessageContainer from "../Message/MessageContainer";
+import MessageContainer from "../message/MessageContainer";
 import SearchUsers from "../search/SearchUsers";
 import { useSelector } from "react-redux";
 

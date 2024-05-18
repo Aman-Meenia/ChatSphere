@@ -1,9 +1,9 @@
 import React from "react";
 import Navbar from "../Navbar";
-import MessageContainer from "../message/MessageContainer";
+import MessageContainer from "../Message/MessageContainer";
 import { TiMessages } from "react-icons/ti";
 
-import MessageBox from "../message/MessageBox";
+import MessageBox from "../Message/MessageBox";
 import { useSelector } from "react-redux";
 
 const ChatArea = () => {
