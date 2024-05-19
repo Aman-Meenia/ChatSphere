@@ -1,8 +1,26 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Messages from "./Messages";
 import MessageDate from "./MessageDate";
+import { useGetAllMessages } from "../../hooks/useGetAllMessages";
+import { useSelector } from "react-redux";
+import { Message } from "./Message";
+import { socketMessage } from "../../hooks/useSocketMessage";
 
 const MessageContainer = () => {
+  const { loading, getAllMessages } = useGetAllMessages();
+
+  const selectedUser = useSelector((state) => state.message.selectedUser);
+  // console.log("Slected user is the  " + selectedUser);
+  socketMessage();
+  const messages = useSelector((state) => state.message.chats);
+
+  useEffect(() => {
+    console.log("selectedUser is ", selectedUser);
+    getAllMessages({ user: selectedUser?._id });
+  }, [selectedUser]);
+
+  // console.log("Messages are ", messages.length);
+
   return (
     <>
       <div
@@ -11,36 +29,44 @@ const MessageContainer = () => {
         // className=" !overflow-scroll"
         className=" mt-[64px] h-full overflow-y-auto  mb-[64px]"
       >
-        <MessageDate />
-        <Messages />
-        <Messages />
-        <MessageDate />
-
-        <Messages />
-        <Messages />
-        <MessageDate />
-
-        <Messages />
-        <Messages />
-        <MessageDate />
-
-        <Messages />
-        <Messages />
-
-        <Messages />
-        <Messages />
-        <MessageDate />
-
-        <Messages />
-        <Messages />
-        <Messages />
-        <Messages />
-        <Messages />
-        <MessageDate />
-
-        <Messages />
-        <Messages />
-        <Messages />
+        {messages?.map((msg) => {
+          // console.log(msg);
+          return (
+            <>
+              <Message msg={msg} />
+            </>
+          );
+        })}
+        {/* <MessageDate /> */}
+        {/* <Messages /> */}
+        {/* <Messages /> */}
+        {/* <MessageDate /> */}
+        {/**/}
+        {/* <Messages /> */}
+        {/* <Messages /> */}
+        {/* <MessageDate /> */}
+        {/**/}
+        {/* <Messages /> */}
+        {/* <Messages /> */}
+        {/* <MessageDate /> */}
+        {/**/}
+        {/* <Messages /> */}
+        {/* <Messages /> */}
+        {/**/}
+        {/* <Messages /> */}
+        {/* <Messages /> */}
+        {/* <MessageDate /> */}
+        {/**/}
+        {/* <Messages /> */}
+        {/* <Messages /> */}
+        {/* <Messages /> */}
+        {/* <Messages /> */}
+        {/* <Messages /> */}
+        {/* <MessageDate /> */}
+        {/**/}
+        {/* <Messages /> */}
+        {/* <Messages /> */}
+        {/* <Messages /> */}
       </div>
     </>
   );

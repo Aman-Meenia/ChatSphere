@@ -19,7 +19,7 @@ const searchSlice = createSlice({
     updateSearchUsers: (state, action) => {
       state.searchusers = state.searchusers.map((user) => {
         if (user._id === action.payload.id) {
-          console.log(action.payload.friendshipStatus);
+          // console.log(action.payload.friendshipStatus);
           return {
             ...user,
             friendshipStatus: action.payload.friendshipStatus,

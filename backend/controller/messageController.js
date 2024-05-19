@@ -1,7 +1,10 @@
 import mongoose from "mongoose";
 import Friend from "../models/friendModel.js";
 import Message from "../models/messageModel.js";
+import User from "../models/userModel.js";
+import { pub, sub } from "../server.js";
 // <----------------------------------Send Message------------------------------------->
+
 export const sendMessage = async (req, res) => {
   try {
     let { receiver, message } = req.body;
@@ -61,18 +64,38 @@ export const sendMessage = async (req, res) => {
       msg: message,
     });
 
+    const receiverUser = await User.findById(receiver);
+
+    // pub.publish(receiverUser.userName),
+    //   {
+    //     msg: JSON.stringify({
+    //       sender,
+    //       receiver,
+    //       msg: message,
+    //     }),
+    //   };
+    console.log("receiverUser.userName, " + receiverUser.userName);
+    await pub.publish(
+      "alice",
+      JSON.stringify({
+        sender: sender,
+        receiver: receiver,
+        msg: message,
+      }),
+    );
+
     await newMessage.save();
 
     return res.status(200).json({
       success: true,
       message: "Message sent successfully",
-      checkFriendStatus: checkFriendStatus,
+      msg: newMessage,
     });
   } catch (error) {
-    // console.log("Error is " + error);
+    console.log("Error is " + error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Internal server error ",
     });
   }
 };
@@ -83,7 +106,8 @@ export const getAllMessages = async (req, res) => {
   try {
     const sender = req.user._id;
     let { receiver } = req.body;
-
+    console.log("Message controller");
+    console.log("receiver is ", receiver);
     if (!mongoose.Types.ObjectId.isValid(receiver)) {
       return res.status(400).json({
         success: false,
@@ -125,10 +149,10 @@ export const getAllMessages = async (req, res) => {
       allMessages: allMessages,
     });
   } catch (error) {
-    // console.log("error is the " + error);
+    console.log("error is the " + error);
     return res.status(500).json({
       success: false,
-      message: "Internal server error",
+      message: "Internal server error ..",
     });
   }
 };

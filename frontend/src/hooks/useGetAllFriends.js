@@ -14,11 +14,12 @@ export const useGetAllFriends = () => {
       .get("/api/v1/friend/get")
       .then((response) => {
         console.log("Use GET ALL FRIENDS");
-        console.log(response.data);
+        // console.log(response);
         console.log(response.data.friendList);
         dispatch(setFriends(response.data.friendList));
       })
       .catch((error) => {
+        console.log("error in getting all friends ");
         console.log(error);
         toast.message(error.response.data.message, {
           duration: 1000,

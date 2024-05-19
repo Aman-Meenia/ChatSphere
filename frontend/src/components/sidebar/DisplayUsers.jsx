@@ -26,8 +26,9 @@ const DisplayUsers = () => {
       )}
       {friends.length > 0 &&
         friends.map((friend, index) => {
-          console.log(friend);
-          return <DisplayUser key={index} user={friend} />;
+          // console.log(friend.friend);
+
+          return <DisplayUser key={index} user={friend.friend} />;
         })}
       {/*   {seiarchUser?.map((user) => ( */}
       {/*   <SearchUser key={user?._id} user={user} /> */}

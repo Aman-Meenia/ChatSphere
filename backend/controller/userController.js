@@ -139,8 +139,8 @@ export const loginUser = async (req, res) => {
       httpOnly: true,
       secure: true,
     };
-    console.log("accessToken", accessToken);
-    console.log("refreshToken", refreshToken);
+    // console.log("accessToken", accessToken);
+    // console.log("refreshToken", refreshToken);
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
@@ -203,8 +203,8 @@ export const searchUser = async (req, res) => {
   try {
     const { userName } = req.params;
 
-    console.log("username is  the ", userName);
-    console.log("UserId is ", req.user._id);
+    // console.log("username is  the ", userName);
+    // console.log("UserId is ", req.user._id);
     const { id } = req.user._id;
 
     const userId = new mongoose.Types.ObjectId(id);
@@ -215,7 +215,7 @@ export const searchUser = async (req, res) => {
     // });
     //
     const requestList = await Request.find({});
-    console.log(requestList);
+    // console.log(requestList);
     const searchUserList = await User.aggregate([
       // Match users whose username matches or contains the search term
       {

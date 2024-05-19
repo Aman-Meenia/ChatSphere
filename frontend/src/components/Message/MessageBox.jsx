@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 import { MdAddPhotoAlternate } from "react-icons/md";
 import { BsEmojiSmile } from "react-icons/bs";
+import { useSendMessage } from "../../hooks/useSendMessage";
 
 const MessageBox = () => {
+  const [msg, setMsg] = useState("");
+  const { loading, sendMessage } = useSendMessage();
+
+  const handleSend = async () => {
+    let message = msg;
+    message = message.trim();
+    console.log("Message " + msg);
+
+    if (message.length > 0) {
+      await sendMessage({ message });
+      console.log("Message is messagebox" + msg);
+      setMsg("");
+    }
+    setMsg("");
+  };
+
   return (
     <>
       {/* <div className="navbar bg-base-100 fixed bottom-0 w-full"> */}
@@ -14,13 +31,17 @@ const MessageBox = () => {
           type="text"
           placeholder="Type message"
           className="w-[51%] pl-2 pr-5 py-1 ml-2 mr-2  rounded-3xl border border-gray-200
-
           items-center gap-2 "
+          value={msg}
+          onChange={(e) => setMsg(e.target.value)}
         />
         <BsEmojiSmile size={28} className="ml-2 mr-2" />
 
         <div className="w-[5%] ml-2">
-          <button className="items-center flex px-3 py-2 bg-indigo-600 rounded-full shadow ">
+          <button
+            onClick={handleSend}
+            className="items-center flex px-3 py-2 bg-indigo-600 rounded-full shadow "
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               width="16"

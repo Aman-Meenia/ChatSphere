@@ -4,7 +4,7 @@ import Friend from "../models/friendModel.js";
 //<-------------------------------get Friends ----------------------------------->
 export const getFriends = async (req, res) => {
   try {
-    console.log("req.User is ", req.user);
+    // console.log("req.User is ", req.user);
     const { id: userId } = req.user;
     console.log("UserId is ", userId);
     const user = await User.findById(userId);
@@ -16,7 +16,7 @@ export const getFriends = async (req, res) => {
       });
     }
     const friend = await Friend.find({ sender: userId });
-
+    console.log("Userid ", userId);
     const friendList = await Friend.aggregate([
       {
         $match: {
@@ -30,7 +30,51 @@ export const getFriends = async (req, res) => {
           receiver: 1,
         },
       },
+      {
+        $lookup: {
+          from: "users",
+          localField: "sender",
+          foreignField: "_id",
+          as: "sender",
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "receiver",
+          foreignField: "_id",
+          as: "receiver",
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          friend: {
+            $cond: {
+              if: {
+                // $eq: [{  $arrayElemAt: ["$receiver._id", 0] }, userId]
+                $eq: [
+                  { $toString: { $arrayElemAt: ["$receiver._id", 0] } },
+                  { $toString: userId },
+                ],
+              },
+              then: {
+                userName: { $arrayElemAt: ["$sender.userName", 0] },
+
+                profilePic: { $arrayElemAt: ["$sender.profilePic", 0] },
+                _id: { $arrayElemAt: ["$sender._id", 0] },
+              },
+              else: {
+                userName: { $arrayElemAt: ["$receiver.userName", 0] },
+                profilePic: { $arrayElemAt: ["$receiver.profilePic", 0] },
+                _id: { $arrayElemAt: ["$receiver._id", 0] },
+              },
+            },
+          },
+        },
+      },
     ]);
+    // console.log("friendList is ", friendList);
 
     return res.status(200).json({
       success: true,
