@@ -3,6 +3,7 @@ import Friend from "../models/friendModel.js";
 import Message from "../models/messageModel.js";
 import User from "../models/userModel.js";
 import { pub, sub } from "../server.js";
+import Chat from "../models/chatModel.js";
 // <----------------------------------Send Message------------------------------------->
 
 export const sendMessage = async (req, res) => {
@@ -24,14 +25,9 @@ export const sendMessage = async (req, res) => {
         message: "user not found",
       });
     }
-    // console.log("sender is ", sender);
-    // console.log("receiver is ", receiver);
-    // console.log("message is ", message);
     receiver = new mongoose.Types.ObjectId(receiver);
 
-    // const friendlist = await Friend.find({});
-    // console.log(friendlist);
-
+    // check if friend
     const checkFriendStatus = await Friend.aggregate([
       {
         $match: {
@@ -58,6 +54,25 @@ export const sendMessage = async (req, res) => {
       });
     }
 
+    // check if the chat is already created
+
+    const checkChat = await Chat.aggregate([
+      {
+        $match: {
+          $and: [
+            { participants: { $size: 2 } },
+            {
+              participants: {
+                $all: [sender, receiver],
+              },
+            },
+          ],
+        },
+      },
+    ]);
+
+    // If chat alreay exist the update the last message
+
     const newMessage = new Message({
       sender,
       receiver,
@@ -66,14 +81,6 @@ export const sendMessage = async (req, res) => {
 
     const receiverUser = await User.findById(receiver);
 
-    // pub.publish(receiverUser.userName),
-    //   {
-    //     msg: JSON.stringify({
-    //       sender,
-    //       receiver,
-    //       msg: message,
-    //     }),
-    //   };
     console.log("receiverUser.userName, " + receiverUser.userName);
     await pub.publish(
       "alice",
@@ -85,6 +92,22 @@ export const sendMessage = async (req, res) => {
     );
 
     await newMessage.save();
+    console.log("checkChat", checkChat);
+    if (checkChat.length) {
+      const chatIs = await Chat.findById(checkChat[0]._id);
+      chatIs.lastMessage = newMessage._id;
+      await chatIs.save({ validateBeforeSave: false });
+    } else {
+      // If chatting for the first time
+
+      const newChat = new Chat({
+        chatName: "one-to-one",
+        participants: [sender, receiver],
+        lastMessage: newMessage._id,
+      });
+
+      await newChat.save();
+    }
 
     return res.status(200).json({
       success: true,
