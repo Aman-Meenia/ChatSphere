@@ -39,7 +39,7 @@ app.use("/api/v1/message", messageRoutes);
 socketConnection();
 sub.on("message", async (channel, message) => {
   console.log("Channel name is ");
-  console.log(channel);
+  // console.log(channel);
   console.log(message);
   const messageData = JSON.parse(message);
   console.log(messageData.receiver);
