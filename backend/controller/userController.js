@@ -171,7 +171,7 @@ export const logoutUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
 
-    console.log("LOgout workign ");
+    // console.log("LOgout workign ");
     if (!user) {
       return res.status(400).json({
         success: false,
@@ -182,6 +182,12 @@ export const logoutUser = async (req, res) => {
     user.refreshToken = null;
     await user.save();
 
+    const options = {
+      httpOnly: true,
+      secure: true,
+    };
+    console.log("Logout successfully");
+
     return res
       .status(200)
       .clearCookie("accessToken", options)
@@ -191,6 +197,7 @@ export const logoutUser = async (req, res) => {
         message: "Logout successfull",
       });
   } catch (err) {
+    console.log("Error while logout" + err);
     return res.status(500).json({
       success: false,
       message: "Internal server error",

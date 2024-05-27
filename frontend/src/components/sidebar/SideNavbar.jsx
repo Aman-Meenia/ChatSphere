@@ -4,11 +4,14 @@ import { IoCreateOutline } from "react-icons/io5";
 import { useSearchUser } from "../../hooks/useSearchUser";
 import { useDispatch } from "react-redux";
 import { setSearchWorking } from "../../features/search/searchUser";
+import { useLogout } from "../../hooks/useLogout";
 
 const SideNavbar = () => {
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    window.location.reload();
+  const { userLogout } = useLogout();
+
+  const handleLogout = async () => {
+    console.log("logout ");
+    await userLogout();
   };
   const dispatch = useDispatch();
 
